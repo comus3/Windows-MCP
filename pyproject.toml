@@ -1,0 +1,223 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-windows-dev"
+version = "1.0.0"
+description = "A secure Model Context Protocol (MCP) server for Windows development environments with granular access controls"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "MCP Windows Team", email = "dev@mcp-windows.local"}
+]
+maintainers = [
+    {name = "MCP Windows Team", email = "dev@mcp-windows.local"}
+]
+keywords = [
+    "mcp",
+    "model-context-protocol", 
+    "windows",
+    "development",
+    "security",
+    "workspace",
+    "ai-assistant"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Security",
+    "Environment :: Console",
+    "Framework :: AsyncIO",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=1.6.0",
+    "fastmcp>=0.9.0",
+    "pywin32>=306; sys_platform=='win32'",
+    "psutil>=5.9.0",
+    "aiofiles>=23.0.0",
+    "aioshutil>=1.3",
+    "asyncio-throttle>=1.0.2",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "cryptography>=42.0.0",
+    "pyyaml>=6.0.1",
+    "python-dotenv>=1.0.0",
+    "structlog>=24.1.0",
+    "colorlog>=6.8.0",
+    "pathspec>=0.12.1",
+    "watchdog>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0", 
+    "pytest-cov>=4.1.0",
+    "black>=24.0.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
+    "types-PyYAML>=6.0.12",
+    "types-psutil>=5.9.5",
+]
+docs = [
+    "mkdocs>=1.5.3",
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.24.0",
+]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/comus3/Windows-MCP"
+Repository = "https://github.com/comus3/Windows-MCP"
+Issues = "https://github.com/comus3/Windows-MCP/issues"
+Documentation = "https://github.com/comus3/Windows-MCP#readme"
+
+[project.scripts]
+mcp-windows = "mcp_windows.main:main"
+mcp-windows-dev = "mcp_windows.main:main"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["mcp_windows*"]
+
+[tool.setuptools.package-data]
+mcp_windows = ["py.typed"]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = "\\.pyi?$"
+exclude = "(\\.(eggs|git|hg|mypy_cache|tox|venv)|build|dist)"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+    "TID", # flake8-tidy-imports
+    "ICN", # flake8-import-conventions
+    "PLC", # Pylint conventions
+    "PLE", # Pylint errors
+    "PLR", # Pylint refactor
+    "PLW", # Pylint warnings
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "PLR0913", # too many arguments to function call
+    "ARG002", # unused method argument
+]
+unfixable = ["B"]
+
+[tool.ruff.isort]
+known-first-party = ["mcp_windows"]
+force-single-line = true
+
+[tool.ruff.per-file-ignores]
+"tests/**/*" = ["TID252"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = [
+    "win32api.*",
+    "win32con.*", 
+    "win32job.*",
+    "win32process.*",
+    "win32security.*",
+    "winerror.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = [
+    "--strict-markers",
+    "--strict-config", 
+    "--cov=mcp_windows",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "windows: marks tests that require Windows",
+    "admin: marks tests that require admin privileges",
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError", 
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*Protocol.*:",
+    "@(abc\\.)?abstractmethod",
+    "TYPE_CHECKING",
+]
+show_missing = true
+precision = 2
