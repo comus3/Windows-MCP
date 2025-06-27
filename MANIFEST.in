@@ -1,0 +1,24 @@
+# Include the license file
+include LICENSE
+
+# Include the readme
+include README.md
+
+# Include requirements
+include requirements.txt
+
+# Include configuration files
+recursive-include src/mcp_windows/config *.yaml *.yml
+
+# Include type hints
+include src/mcp_windows/py.typed
+
+# Exclude development files
+exclude .gitignore
+exclude .github
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude * *.pyd
+recursive-exclude * *.so
+recursive-exclude tests *
+recursive-exclude docs *
