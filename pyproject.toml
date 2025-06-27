@@ -12,12 +12,13 @@ license = {text = "MIT"}
 authors = [
     {name = "MCP Windows Team", email = "dev@mcp-windows.local"},
 ]
-keywords = ["mcp", "windows", "development", "security", "sandbox"]
+keywords = ["mcp", "windows", "development", "security", "sandbox", "model-context-protocol", "ai", "assistant"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Win32 (MS Windows)",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
     "Operating System :: Microsoft :: Windows :: Windows 10",
     "Operating System :: Microsoft :: Windows :: Windows 11",
     "Programming Language :: Python :: 3",
@@ -25,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries",
     "Topic :: System :: Systems Administration",
+    "Topic :: Security",
     "Typing :: Typed",
 ]
 
@@ -56,6 +58,7 @@ dev = [
     "mypy>=1.8.0",
     "types-PyYAML>=6.0.12",
     "types-psutil>=5.9.5",
+    "tomli>=2.0.0",
 ]
 docs = [
     "mkdocs>=1.5.3",
@@ -64,21 +67,30 @@ docs = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/mcp-windows/mcp-windows-dev"
-"Bug Reports" = "https://github.com/mcp-windows/mcp-windows-dev/issues"
-"Source" = "https://github.com/mcp-windows/mcp-windows-dev"
+"Homepage" = "https://github.com/comus3/Windows-MCP"
+"Bug Reports" = "https://github.com/comus3/Windows-MCP/issues"
+"Source" = "https://github.com/comus3/Windows-MCP"
 "Documentation" = "https://mcp-windows.readthedocs.io"
 
 [project.scripts]
 mcp-windows = "mcp_windows.main:main"
 mcp-windows-configure = "mcp_windows.tools.configure:main"
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+zip-safe = false
+
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["mcp_windows", "mcp_windows.*"]
 
 [tool.setuptools.package-data]
-mcp_windows = ["config/*.yaml", "py.typed"]
+mcp_windows = [
+    "config/*.yaml", 
+    "config/*.yml",
+    "py.typed"
+]
 
 [tool.black]
 line-length = 100
@@ -105,7 +117,7 @@ line-length = 100
 target-version = "py311"
 exclude = [
     ".bzr",
-    ".direnv",
+    ".direnv", 
     ".eggs",
     ".git",
     ".hg",
@@ -143,7 +155,11 @@ select = [
 ignore = [
     "PLR0913",  # Too many arguments
     "COM812",   # Missing trailing comma
+    "E501",     # Line too long (handled by black)
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -159,14 +175,19 @@ warn_unused_ignores = true
 warn_no_return = true
 warn_unreachable = true
 strict_equality = true
+show_error_codes = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = "win32.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "winreg"
+module = [
+    "win32.*",
+    "winreg",
+    "pywin32.*",
+    "structlog.*",
+    "colorlog.*",
+    "asyncio_throttle.*",
+    "aioshutil.*"
+]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
