@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime
 from uuid import UUID
 
-from mcp.server.fastmcp import FastMCP, Context
+from fastmcp import FastMCP, Context
 from pydantic import BaseModel, Field
 
 from ..core.session_manager import SessionManager

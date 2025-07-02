@@ -15,7 +15,7 @@ from uuid import UUID
 import base64
 import mimetypes
 
-from mcp.server.fastmcp import FastMCP, Context
+from fastmcp import FastMCP, Context
 from pydantic import BaseModel, Field
 
 from ..core.session_manager import SessionManager

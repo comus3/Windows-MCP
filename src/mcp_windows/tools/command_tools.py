@@ -10,7 +10,7 @@ from pathlib import Path
 from uuid import UUID
 import json
 
-from mcp.server.fastmcp import FastMCP, Context
+from fastmcp import FastMCP, Context
 from pydantic import BaseModel, Field
 
 from ..core.command_executor import CommandExecutor

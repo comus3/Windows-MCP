@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 import structlog
 
 from .config.settings import MCPWindowsSettings, get_settings
