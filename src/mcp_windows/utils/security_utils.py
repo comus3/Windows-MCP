@@ -146,9 +146,9 @@ class SecurityUtils:
     
     @staticmethod
     def create_security_descriptor(
-        owner_sid: Optional[win32security.PySID] = None,
-        group_sid: Optional[win32security.PySID] = None,
-        dacl_entries: Optional[List[Tuple[win32security.PySID, int, int]]] = None
+        owner_sid: Optional[Any] = None,
+        group_sid: Optional[Any] = None,
+        dacl_entries: Optional[List[Tuple[Any, int, int]]] = None
     ) -> win32security.SECURITY_DESCRIPTOR:
         """
         Create a security descriptor with specified permissions.
