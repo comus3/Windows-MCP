@@ -194,7 +194,7 @@ class SecurityUtils:
     @staticmethod
     def set_file_permissions(
         path: Path,
-        owner_sid: Optional[win32security.PySID] = None,
+        owner_sid: Optional[Any] = None,
         permissions: Optional[Dict[str, int]] = None,
         inherit: bool = True
     ) -> bool:
@@ -353,11 +353,11 @@ class SecurityUtils:
         """Decode Windows access mask to permission strings."""
         permissions = []
         
-        if mask & ntsecuritycon.FILE_GENERIC_READ:
+        if mask & ntsecuritycon.GENERIC_READ:
             permissions.append("read")
-        if mask & ntsecuritycon.FILE_GENERIC_WRITE:
+        if mask & ntsecuritycon.GENERIC_WRITE:
             permissions.append("write")
-        if mask & ntsecuritycon.FILE_GENERIC_EXECUTE:
+        if mask & ntsecuritycon.GENERIC_EXECUTE:
             permissions.append("execute")
         if mask & ntsecuritycon.DELETE:
             permissions.append("delete")
@@ -377,7 +377,7 @@ class SecurityUtils:
     @staticmethod
     def check_path_access(
         path: Path,
-        required_access: int = win32con.FILE_GENERIC_READ
+        required_access: int = win32con.GENERIC_READ
     ) -> Tuple[bool, Optional[str]]:
         """
         Check if current user has required access to path.
@@ -643,8 +643,8 @@ def get_current_user() -> Tuple[str, str]:
 def check_path_access(path: Path, write: bool = False) -> Tuple[bool, Optional[str]]:
     """Check path access for current user."""
     access_mask = (
-        win32con.FILE_GENERIC_WRITE if write 
-        else win32con.FILE_GENERIC_READ
+        win32con.GENERIC_WRITE if write 
+        else win32con.GENERIC_READ
     )
     return SecurityUtils.check_path_access(path, access_mask)
 
