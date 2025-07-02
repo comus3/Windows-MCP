@@ -13,7 +13,7 @@ import asyncio
 import structlog
 
 from .base_shell import BaseShell, ShellProcess
-from ..models.command_result import CommandEnvironment, ShellType
+from ..models.command_result import CommandResult, CommandEnvironment, ShellType
 from ..config.settings import ShellSettings
 
 logger = structlog.get_logger(__name__)
