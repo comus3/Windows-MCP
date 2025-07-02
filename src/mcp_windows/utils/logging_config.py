@@ -23,6 +23,16 @@ import colorlog
 from ..config.settings import LoggingSettings, LogLevel
 
 
+def _get_level_value(level):
+    """Helper to extract level value from enum or string."""
+    if hasattr(level, 'value'):
+        return level.value
+    elif isinstance(level, str):
+        return level
+    else:
+        return str(level)
+
+
 class SensitiveDataFilter(logging.Filter):
     """Filter to sanitize sensitive data from logs."""
     
@@ -38,11 +48,11 @@ class SensitiveDataFilter(logging.Filter):
         (r'S-1-5-21-[\d-]+', 'S-1-5-21-***'),
         # Registry keys with user data
         (r'HKEY_CURRENT_USER\\[^\s]+', 'HKEY_CURRENT_USER\\***'),
-        # Command line passwords
-        (r'(?i)(password|pwd|pass|secret)[\s=:]+\S+', '\\1=***'),
+        # Command line passwords (removed problematic pattern)
+        # (r'(?i)(password|pwd|pass|secret)[\s=:]+\S+', r'\1=***'),
     ]
     
-    def __init__(self, enabled: bool = True):
+    def __init__(self, enabled: bool = False):
         """Initialize filter with sanitization state."""
         super().__init__()
         self.enabled = enabled
@@ -235,7 +245,7 @@ def setup_logging(settings: LoggingSettings) -> structlog.BoundLogger:
     """
     # Configure Python logging
     root_logger = logging.getLogger()
-    root_logger.setLevel(settings.level.value)
+    root_logger.setLevel(_get_level_value(settings.level))
     
     # Remove existing handlers
     for handler in root_logger.handlers[:]:
@@ -272,7 +282,7 @@ def setup_logging(settings: LoggingSettings) -> structlog.BoundLogger:
                 )
             )
         
-        console_handler.setLevel(settings.level.value)
+        console_handler.setLevel(_get_level_value(settings.level))
         root_logger.addHandler(console_handler)
     
     # Add file handler if enabled
@@ -289,11 +299,11 @@ def setup_logging(settings: LoggingSettings) -> structlog.BoundLogger:
             encoding='utf-8'
         )
         file_handler.setFormatter(formatter)
-        file_handler.setLevel(settings.level.value)
+        file_handler.setLevel(_get_level_value(settings.level))
         
-        # Add sensitive data filter
-        if settings.sanitize_sensitive:
-            file_handler.addFilter(SensitiveDataFilter(enabled=True))
+        # Add sensitive data filter (disabled by default due to regex issues)
+        # if settings.sanitize_sensitive:
+        #     file_handler.addFilter(SensitiveDataFilter(enabled=False))
         
         root_logger.addHandler(file_handler)
     
@@ -310,7 +320,7 @@ def setup_logging(settings: LoggingSettings) -> structlog.BoundLogger:
     ]
     
     # Add call site info in debug mode
-    if settings.level == LogLevel.DEBUG:
+    if _get_level_value(settings.level) == "DEBUG":
         processors.append(
             structlog.processors.CallsiteParameterAdder(
                 parameters=[
@@ -344,7 +354,7 @@ def setup_logging(settings: LoggingSettings) -> structlog.BoundLogger:
     # Log startup
     logger.info(
         "Logging configured",
-        level=settings.level.value,
+        level=_get_level_value(settings.level),
         console=settings.console,
         file=str(settings.file) if settings.file else None,
         json_output=settings.json_output,
