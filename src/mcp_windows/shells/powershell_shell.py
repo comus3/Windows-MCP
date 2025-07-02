@@ -178,8 +178,8 @@ class PowerShellBase(BaseShell):
     async def invoke_cmdlet(
         self,
         cmdlet: str,
-        parameters: Optional[Dict[str, Any]] = None,
         environment: CommandEnvironment,
+        parameters: Optional[Dict[str, Any]] = None,
         timeout: Optional[float] = None
     ) -> CommandResult:
         """
